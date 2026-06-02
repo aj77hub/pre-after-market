@@ -1,59 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Stock Grid</title>
+  <title>TradingView Grid</title>
   <style>
-    table {
-      border-collapse: collapse;
-      width: 500px;
-      font-family: Arial;
-    }
-    th, td {
-      border: 1px solid #444;
-      padding: 6px;
-      text-align: center;
-    }
-    th {
-      background: #eee;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 250px);
+      gap: 10px;
     }
   </style>
 </head>
 <body>
 
-<h2>Stock Prices (Yahoo Finance)</h2>
+<h2>TradingView Widgets Grid</h2>
 
-<table>
-  <tr>
-    <th>Ticker</th>
-    <th>Last Close</th>
-    <th>Pre‑Market</th>
-    <th>After‑Hours</th>
-  </tr>
+<div class="grid">
+  <div class="tv">SNAL<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "SNAL", "width": "250", "height": "220" }</script></div></div>
 
-  <tr><td>SNAL</td><td id="SNAL-close"></td><td id="SNAL-pre"></td><td id="SNAL-after"></td></tr>
-  <tr><td>NEXR</td><td id="NEXR-close"></td><td id="NEXR-pre"></td><td id="NEXR-after"></td></tr>
-  <tr><td>PRZO</td><td id="PRZO-close"></td><td id="PRZO-pre"></td><td id="PRZO-after"></td></tr>
-  <tr><td>ASTC</td><td id="ASTC-close"></td><td id="ASTC-pre"></td><td id="ASTC-after"></td></tr>
-  <tr><td>HL</td><td id="HL-close"></td><td id="HL-pre"></td><td id="HL-after"></td></tr>
-  <tr><td>SBSW</td><td id="SBSW-close"></td><td id="SBSW-pre"></td><td id="SBSW-after"></td></tr>
+  <div class="tv">NEXR<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "NEXR", "width": "250", "height": "220" }</script></div></div>
 
-</table>
+  <div class="tv">PRZO<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "PRZO", "width": "250", "height": "220" }</script></div></div>
 
-<script>
-async function loadQuote(ticker) {
-  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}`;
+  <div class="tv">ASTC<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "ASTC", "width": "250", "height": "220" }</script></div></div>
 
-  const res = await fetch(url);
-  const data = await res.json();
-  const q = data.quoteResponse.result[0];
+  <div class="tv">HL<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "HL", "width": "250", "height": "220" }</script></div></div>
 
-  document.getElementById(ticker + "-close").innerText = q.regularMarketPreviousClose ?? "-";
-  document.getElementById(ticker + "-pre").innerText = q.preMarketPrice ?? "-";
-  document.getElementById(ticker + "-after").innerText = q.postMarketPrice ?? "-";
-}
-
-["SNAL", "NEXR", "PRZO", "ASTC", "HL", "SBSW"].forEach(loadQuote);
-</script>
+  <div class="tv">SBSW<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "SBSW", "width": "250", "height": "220" }</script></div></div>
+</div>
 
 </body>
 </html>
