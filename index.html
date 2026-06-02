@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<h2>Stock Prices (TradingView Live)</h2>
+<h2>Stock Prices (Yahoo Finance)</h2>
 
 <table>
   <tr>
@@ -40,65 +40,19 @@
 </table>
 
 <script>
-const TV_URL = "wss://data.tradingview.com/socket.io/websocket";
+async function loadQuote(ticker) {
+  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}`;
 
-function uid() {
-  return Math.random().toString(36).substring(2, 12);
+  const res = await fetch(url);
+  const data = await res.json();
+  const q = data.quoteResponse.result[0];
+
+  document.getElementById(ticker + "-close").innerText = q.regularMarketPreviousClose ?? "-";
+  document.getElementById(ticker + "-pre").innerText = q.preMarketPrice ?? "-";
+  document.getElementById(ticker + "-after").innerText = q.postMarketPrice ?? "-";
 }
 
-function send(ws, m, p) {
-  ws.send(`~m~${JSON.stringify({ m, p }).length}~m~${JSON.stringify({ m, p })}`);
-}
-
-function connectTV(ticker) {
-  const session = "qs_" + uid();
-  const chartSession = "cs_" + uid();
-
-  const ws = new WebSocket(TV_URL + "?from=chart%2F&date=" + Date.now());
-
-  ws.onopen = () => {
-    send(ws, "set_auth_token", ["unauthorized"]);
-    send(ws, "chart_create_session", [chartSession, ""]);
-    send(ws, "quote_create_session", [session]);
-
-    send(ws, "quote_add_symbols", [
-      session,
-      ticker,
-      { flags: ["extended_hours"] }
-    ]);
-
-    send(ws, "resolve_symbol", [chartSession, "symbol_1", ticker]);
-    send(ws, "create_series", [chartSession, "s1", "symbol_1", "1", 300]);
-  };
-
-  ws.onmessage = (msg) => {
-    const parts = msg.data.split("~m~");
-
-    for (let i = 0; i < parts.length; i++) {
-      if (!parts[i] || isNaN(parts[i])) continue;
-
-      const jsonStr = parts[i + 1];
-      if (!jsonStr) continue;
-
-      let payload;
-      try {
-        payload = JSON.parse(jsonStr);
-      } catch {
-        continue;
-      }
-
-      if (payload.m === "qsd") {
-        const q = payload.p[1];
-
-        document.getElementById(ticker + "-close").innerText = q.prev_close_price ?? "-";
-        document.getElementById(ticker + "-pre").innerText = q.rtp ?? "-";
-        document.getElementById(ticker + "-after").innerText = q.rth ?? "-";
-      }
-    }
-  };
-}
-
-["SNAL", "NEXR", "PRZO", "ASTC", "HL", "SBSW"].forEach(connectTV);
+["SNAL", "NEXR", "PRZO", "ASTC", "HL", "SBSW"].forEach(loadQuote);
 </script>
 
 </body>
