@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Stock Grid</title>
+  <title>Finnhub Extended Hours Grid</title>
   <style>
     table {
       border-collapse: collapse;
@@ -20,36 +20,44 @@
 </head>
 <body>
 
-<h2>Stock Prices (Yahoo Finance)</h2>
+<h2>Stock Prices (Finnhub Extended Hours)</h2>
 
 <table>
   <tr>
     <th>Ticker</th>
     <th>Last Close</th>
+    <th>Current Price</th>
     <th>Pre‑Market</th>
     <th>After‑Hours</th>
   </tr>
 
-  <tr><td>SNAL</td><td id="SNAL-close"></td><td id="SNAL-pre"></td><td id="SNAL-after"></td></tr>
-  <tr><td>NEXR</td><td id="NEXR-close"></td><td id="NEXR-pre"></td><td id="NEXR-after"></td></tr>
-  <tr><td>PRZO</td><td id="PRZO-close"></td><td id="PRZO-pre"></td><td id="PRZO-after"></td></tr>
-  <tr><td>ASTC</td><td id="ASTC-close"></td><td id="ASTC-pre"></td><td id="ASTC-after"></td></tr>
-  <tr><td>HL</td><td id="HL-close"></td><td id="HL-pre"></td><td id="HL-after"></td></tr>
-  <tr><td>SBSW</td><td id="SBSW-close"></td><td id="SBSW-pre"></td><td id="SBSW-after"></td></tr>
+  <tr><td>SNAL</td><td id="SNAL-close"></td><td id="SNAL-current"></td><td id="SNAL-pre"></td><td id="SNAL-after"></td></tr>
+  <tr><td>NEXR</td><td id="NEXR-close"></td><td id="NEXR-current"></td><td id="NEXR-pre"></td><td id="NEXR-after"></td></tr>
+  <tr><td>PRZO</td><td id="PRZO-close"></td><td id="PRZO-current"></td><td id="PRZO-pre"></td><td id="PRZO-after"></td></tr>
+  <tr><td>ASTC</td><td id="ASTC-close"></td><td id="ASTC-current"></td><td id="ASTC-pre"></td><td id="ASTC-after"></td></tr>
+  <tr><td>HL</td><td id="HL-close"></td><td id="HL-current"></td><td id="HL-pre"></td><td id="HL-after"></td></tr>
+  <tr><td>SBSW</td><td id="SBSW-close"></td><td id="SBSW-current"></td><td id="SBSW-pre"></td><td id="SBSW-after"></td></tr>
 
 </table>
 
 <script>
+const API_KEY = "d4lrl99r01qr851q8bj0d4lrl99r01qr851q8bjg";  // must be inside quotes
+
 async function loadQuote(ticker) {
-  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}`;
+  const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${API_KEY}`;
 
-  const res = await fetch(url);
-  const data = await res.json();
-  const q = data.quoteResponse.result[0];
+  try {
+    const res = await fetch(url);
+    const q = await res.json();
 
-  document.getElementById(ticker + "-close").innerText = q.regularMarketPreviousClose ?? "-";
-  document.getElementById(ticker + "-pre").innerText = q.preMarketPrice ?? "-";
-  document.getElementById(ticker + "-after").innerText = q.postMarketPrice ?? "-";
+    document.getElementById(ticker + "-close").innerText   = q.pc   ?? "-";
+    document.getElementById(ticker + "-current").innerText = q.c    ?? "-";
+    document.getElementById(ticker + "-pre").innerText     = q.pm   ?? "-";
+    document.getElementById(ticker + "-after").innerText   = q.post ?? "-";
+
+  } catch (err) {
+    console.error("Error loading", ticker, err);
+  }
 }
 
 ["SNAL", "NEXR", "PRZO", "ASTC", "HL", "SBSW"].forEach(loadQuote);
